@@ -13,19 +13,19 @@ Eigen::MatrixXd riccati_solver(Eigen::MatrixXd A,
   Eigen::EigenSolver<Eigen::MatrixXd> s(H);
 
   int j   = 0;
-  auto S1 = Eigen::MatrixXd(n, n);
-  auto S2 = Eigen::MatrixXd(n, n);
+  auto S1 = Eigen::MatrixXcd(n, n);
+  auto S2 = Eigen::MatrixXcd(n, n);
   for (int i = 0; i < 2 * n; i++) {
     if (s.eigenvalues()[i].real() < 0) {
-      S1.col(j) = s.eigenvectors().real().block(0, i, n, 1);
-      S2.col(j) = s.eigenvectors().real().block(n, i, n, 1);
+      S1.col(j) = s.eigenvectors().block(0, i, n, 1);
+      S2.col(j) = s.eigenvectors().block(n, i, n, 1);
       j++;
     }
   }
 
   auto P = S2 * S1.inverse();
 
-  return P;
+  return P.real();
 }
 
 Eigen::MatrixXd lqr(Eigen::MatrixXd A,
